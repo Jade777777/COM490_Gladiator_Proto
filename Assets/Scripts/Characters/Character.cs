@@ -13,9 +13,17 @@ public class Character : MonoBehaviour
     [SerializeField]
     float moveSpeed = 2;
     [SerializeField]
-    faction f = faction.enemy;
+    Faction f = Faction.enemy;
 
-    private enum faction { player, enemy }
+    [SerializeField]
+    float health = 5;
+
+    [SerializeField]
+    float damage = 1;
+    [SerializeField]
+    int currency = 1;
+
+    public enum Faction { player, enemy }
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -53,8 +61,32 @@ public class Character : MonoBehaviour
             else
             {
                 animator.SetBool("Attack", true);
+                target.Damage(damage);
             }
+        }
+        else
+        {
+            animator.SetBool("Attack", false);
         }
     }
 
+    public Faction GetFaction()
+    {
+        return f;
+    }
+
+
+    public void Damage(float damage)
+    {
+        health -= damage;
+        if (health <= 0)
+        {
+            if(f != Faction.player)
+            {
+                PlayerInteraction.Instance.AddCurrency(currency);
+            } 
+            Destroy(gameObject);
+        }
+        Debug.Log("Ouch!");
+    }
 }

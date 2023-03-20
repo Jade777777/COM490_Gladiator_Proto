@@ -4,15 +4,21 @@ using UnityEngine;
 
 public class Interactable : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField]
+    private GameObject spawnablePrefab;
 
-    // Update is called once per frame
-    void Update()
+    public GameObject GetSpawnablePrefab()
     {
-        
+        if (true)
+        {
+            Debug.Log("Selected object!");
+            return spawnablePrefab;
+        }
+        else
+        {
+            Debug.Log("Can not select object!");
+            return null;
+        }
+
     }
 }
