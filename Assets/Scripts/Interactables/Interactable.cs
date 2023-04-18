@@ -6,11 +6,13 @@ public class Interactable : MonoBehaviour
 {
     [SerializeField]
     private GameObject spawnablePrefab;
-
+    [SerializeField]
+    private int cost;
     public GameObject GetSpawnablePrefab()
     {
-        if (true)
+        if (PlayerInteraction.Instance.GetCurrency()>= cost)
         {
+            PlayerInteraction.Instance.AddCurrency(-cost);
             Debug.Log("Selected object!");
             return spawnablePrefab;
         }

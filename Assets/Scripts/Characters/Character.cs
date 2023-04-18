@@ -6,7 +6,6 @@ using UnityEngine.Animations;
 public class Character : MonoBehaviour
 {
     Animator animator;
-    Transform parent;
     CharacterController cc;
     [SerializeField]
     float attackRange = 1.5f;
@@ -19,54 +18,73 @@ public class Character : MonoBehaviour
     float health = 5;
 
     [SerializeField]
-    float damage = 1;
+    float dps = 1;
     [SerializeField]
     int currency = 1;
 
+    [SerializeField]
+    GameObject marker;
+
+    bool isDead = false;
     public enum Faction { player, enemy }
     void Start()
     {
         animator = GetComponent<Animator>();
         cc= GetComponent<CharacterController>();
-        parent = transform.parent;
+  
     }
 
     // Update is called once per frame
     void Update()
     {
-        Character target = null;
-        float closest = Mathf.Infinity;
-
-        foreach(Character c in parent.GetComponentsInChildren<Character>()) 
+        if (isDead)
         {
-            if (f != c.f)
-            {
-                float dist = Vector3.Distance(c.transform.position, transform.position);
-                if (c != this && dist < closest)
-                {
-                    closest = dist;
-                    target = c;
-                }
-            }
-        }
-       
-        if(target != null)
-        {
-            Vector3 targetDir = target.transform.position - transform.position;
-            if (targetDir.magnitude > attackRange)
-            {
-                animator.SetBool("Attack", false);
-                cc.Move(targetDir.normalized * moveSpeed * Time.deltaTime);
-            }
-            else
-            {
-                animator.SetBool("Attack", true);
-                target.Damage(damage);
-            }
+            return;
         }
         else
         {
-            animator.SetBool("Attack", false);
+
+            Character target = null;
+            float closest = Mathf.Infinity;
+
+            foreach (Character c in transform.parent.GetComponentsInChildren<Character>())
+            {
+                if (f != c.f)
+                {
+                    float dist = Vector3.Distance(c.transform.position, transform.position);
+                    if (c != this && dist < closest)
+                    {
+                        closest = dist;
+                        target = c;
+                    }
+                }
+            }
+
+            if (target != null)
+            {
+                animator.speed = 1f;
+                Vector3 targetDir = target.transform.position - transform.position;
+                if (targetDir.magnitude > attackRange)
+                {
+                    animator.SetBool("Attack", false);
+                    transform.LookAt(target.transform.position);
+                    
+                    cc.SimpleMove(targetDir.normalized * moveSpeed);
+                }
+                else
+                {
+                    transform.LookAt(target.transform.position);
+                    animator.SetBool("Attack", true);
+                    target.Damage(dps*Time.deltaTime);
+                }
+            }
+            else
+            {
+
+                cc.SimpleMove(transform.forward * 0.2f*moveSpeed);
+                animator.speed = 0.2f;
+                animator.SetBool("Attack", false);
+            }
         }
     }
 
@@ -81,11 +99,18 @@ public class Character : MonoBehaviour
         health -= damage;
         if (health <= 0)
         {
+            animator.speed = 1f;
             if(f != Faction.player)
             {
                 PlayerInteraction.Instance.AddCurrency(currency);
-            } 
-            Destroy(gameObject);
+            }
+            animator.SetBool("Dead" , true);
+            if(marker!= null)
+            {
+                Destroy(marker);
+            }
+            Destroy(cc);
+            Destroy(this);
         }
         Debug.Log("Ouch!");
     }

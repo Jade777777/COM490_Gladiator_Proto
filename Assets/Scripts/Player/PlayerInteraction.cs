@@ -35,7 +35,10 @@ public class PlayerInteraction : MonoBehaviour
         Debug.Log("Added " + amount + " to currency");
    
     }
-
+    public int GetCurrency()
+    {
+        return currency;
+    }
 
 
 
