@@ -18,7 +18,11 @@ public class PlayerInteraction : MonoBehaviour
     [SerializeField]
     TMP_Text currencyValue;
 
-    int currency = 0;
+    [SerializeField]
+    AudioSource addCurrency;
+
+    [SerializeField]
+    int currency = 7;
 
     [HideInInspector]
     public static PlayerInteraction Instance;
@@ -26,10 +30,12 @@ public class PlayerInteraction : MonoBehaviour
     public void Awake()
     {
         Instance = this;
+        currencyValue.text = currency.ToString();
     }
 
     public void AddCurrency(int amount)
     {
+        addCurrency.Play();
         currency += amount;
         currencyValue.text = currency.ToString();
         Debug.Log("Added " + amount + " to currency");

@@ -18,6 +18,15 @@ public class WaveManager : MonoBehaviour
     [SerializeField]
     float spawnTime = 4f;
 
+    [SerializeField]
+    AudioSource cheer;
+
+    [SerializeField]
+    AudioSource waveStart;
+
+    [SerializeField]
+    AudioSource roundStart;
+
     int wave=0;
     bool spawning = false;
 
@@ -76,7 +85,7 @@ public class WaveManager : MonoBehaviour
     {
         reseting = true;
         yield return new WaitForSeconds(spawnTime);
-
+        roundStart.Play();
 
 
         if (reseting)
@@ -95,8 +104,10 @@ public class WaveManager : MonoBehaviour
     IEnumerator NewWave()
     {
        
+        cheer.Play();
         spawning = true;
         yield return new WaitForSeconds(spawnTime);
+        waveStart.Play();
         for (int i = 0; i < wave; i++)
         {
             Vector3 offset = new Vector3(Random.Range(-spawnRange,spawnRange),0, Random.Range(-spawnRange, spawnRange));
@@ -116,5 +127,6 @@ public class WaveManager : MonoBehaviour
         }
         wave++;
         spawning = false;
+        cheer.Stop();
     }
 }

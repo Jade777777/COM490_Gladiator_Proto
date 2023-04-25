@@ -25,6 +25,9 @@ public class Character : MonoBehaviour
     [SerializeField]
     GameObject marker;
 
+    [SerializeField]
+    AudioSource getHit;
+
     bool isDead = false;
     public enum Faction { player, enemy }
     void Start()
@@ -96,6 +99,7 @@ public class Character : MonoBehaviour
 
     public void Damage(float damage)
     {
+        
         health -= damage;
         if (health <= 0)
         {
@@ -112,6 +116,7 @@ public class Character : MonoBehaviour
             Destroy(cc);
             Destroy(this);
         }
+        getHit.Play();
         Debug.Log("Ouch!");
     }
 }
